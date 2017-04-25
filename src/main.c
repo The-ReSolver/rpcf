@@ -25,12 +25,6 @@ int main(int argc, char **argv) {
 	/********************************/
 	/*        Checks     		    */
 	/********************************/
-	if (!fileExists("init")){
-		log_info("init file does not exist in the current folder. Exiting gracefully.");
-		return_code = 1;
-		exit(return_code);
-	}
-
 	if (!fileExists("params")){
 		log_info("params file does not exist in the current folder. Exiting gracefully.");
 		return_code = 1;
@@ -70,7 +64,7 @@ int main(int argc, char **argv) {
 	struct RealField    *storage_r2 = realFieldCreate(params->Ny, params->Nz);
 	struct ComplexField *storage_c0 = complexFieldCreate(params->Ny, params->Nz);
 
-	// other structures
+	// buffer to keep the recent time history of the kinetic energy
 	struct Buffer *Ks  = bufferCreate(params->dt);
 
 	// these two will contain the velocity field in fourier and physical
@@ -82,14 +76,18 @@ int main(int argc, char **argv) {
 	/********************/	
 	/* Initialization   */
 	/********************/
-	initSolution(UK, params, plans);
+	double w0 = 0;
+	double psi_upper = 0;
+
+	initSolution(UK, params, plans, w0, psi_upper);
 	complexFieldCopy(UK_old, UK);
 
-	// Here i have a flow solution that satisfies no-slip boundary conditions, and where 
+	// Here i have a flow solution that satisfies the boundary conditions, and where 
 	// vorticity has been obtained by solution of the poisson equation.
 
 	// compute nonlinear term first
 	nonLinearTerm(UK, storage_r0, storage_r1, storage_r2, params, plans, NK);
+
 
 	/*************************/
 	/* Main integration loop */
@@ -97,13 +95,27 @@ int main(int argc, char **argv) {
 	double t = params->t_restart;
 	for (int it=0; it<(params->T - params->t_restart)/params->dt; it++) {
 
-		// update buffer for derivative
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+		// ~~~~~~~~~    CONTROL METHOD    ~~~~~~~~~~~~~~~~ //
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+		//w0 = params->A*sin(params->eta*t);
+
+		// chirp signal
+		// w0 = params->A*sin(0.001*pow(1.022, t));
+
+		// constant bottom wall velocity
+		w0 = 0.0;
+
+		// then apply bc
+		applyBC(UK, params, w0, psi_upper);
+
+		// update buffer for derivative of the kinetic energy
 		if ((it + 2) % params->n_it_out == 0 || 
 			(it + 1) % params->n_it_out == 0 ||
 			(it + 0) % params->n_it_out == 0) {
 
 			// get velocity components
-			toVelocity(UK, VK, storage_c0, params);
+			toVelocity(UK, VK, storage_c0, params, w0);
 
 			// get velocity components in physical space
 			ifft(VK, V, plans);
@@ -120,18 +132,14 @@ int main(int argc, char **argv) {
 				// output to screen
 				printf("%.5e %.12e %+.12e %+.12e %.5e\n", t, Ks->data[0], 
 										       	 	         ddt(Ks), 
-											     	         ddt(Ks)/Ks->data[0],///log(10),
+											     	         ddt(Ks)/Ks->data[0],
 											     	         CFL(V, params));
 				fflush(stdout);
-			}
-		}
 
-		// then apply bc
-		if (t<0) {
-			// wall_normal_openloop(UK, params, 1, 0.05*params->Nz);
-			wall_normal_opposition(UK, params, 0);
-		} else {
-			enforceNoSlip(UK, params);
+				// if (fabs(ddt(Ks)) < 1e-12) {
+			    	// break;
+				// }
+			}
 		}
 
 		// update old nonlinear term
@@ -148,19 +156,17 @@ int main(int argc, char **argv) {
 
 		// solve helmoltz problems
 		solveVelocityHelmoltzProblems(RK, params, UK);
-		solveVorticityStreamFuncHelmoltzProblems(RK, params, UK);
+		solveVorticityStreamFuncHelmoltzProblems(RK, params, UK, w0, psi_upper);
 
 		// update current time 
 		t += params->dt;
 
-		// increase Re 
-		// params->Re = 1000.0 + t/20;
-
-		// exit condition
-		// if ( fabs(ddt(Ks)) < 1e-12 ) {
-		// break;
-		// }
+		// enlarge the domain
+		// params->Re = 10 + 0.2*t;
+		//params->L = 8.0 + t*(80-8)/10000.0;
+		//params->alpha = 4*asin(1.0)/params->L;
 	}
+
 
 
 

@@ -3,9 +3,9 @@
 #include <string.h>
 #include <complex.h>
 #include <fftw3.h>
-#define MKL_Complex16 complex
-#include <mkl.h>
-//#include <lapacke.h>
+//#define MKL_Complex16 complex
+//#include <mkl.h>
+#include <lapacke.h>
 #include <omp.h>
 
 
@@ -85,14 +85,19 @@ void solveVelocityHelmoltzProblems(struct ComplexField *RK, struct Parameters *p
 	free(ci);
 }
 
-void solveVorticityStreamFuncHelmoltzProblems(struct ComplexField *RK, struct Parameters *params, struct ComplexField *UK) {
+void solveVorticityStreamFuncHelmoltzProblems(struct ComplexField *RK, struct Parameters *params, struct ComplexField *UK, double w0, double psi_upper) {
 	/*	Solve coupled Hlemholtz problem for vorticity and streamfunction.
+
+		The value of w0 specifies the speed of the lower wall.
 	*/
 
 	// lapack solutions things
 	int M = 2*(params->Ny - 2);  // size of the matrix
 	int ldab = 7;                // Leading dimension of the matrix. 2*kl + ku + 1
-	long long ipiv[M];                 // Leading dimension of the matrix. 2*kl + ku + 1
+	//long long ipiv[M];           // Leading dimension of the matrix. 2*kl + ku + 1
+	// this was before, with intel
+	int ipiv[M];           // Leading dimension of the matrix. 2*kl + ku + 1
+
 	int info;
 
 	// working areas for solution of system
@@ -108,7 +113,6 @@ void solveVorticityStreamFuncHelmoltzProblems(struct ComplexField *RK, struct Pa
 		// array to store the vector of known terms + solution
 		b = malloc(sizeof(complex)*M);
 	
-
 		#pragma omp for
 		for (int k=0; k<params->Nz/2+1; k++) {
 
@@ -151,16 +155,35 @@ void solveVorticityStreamFuncHelmoltzProblems(struct ComplexField *RK, struct Pa
 				index_matrix_lapack(vals, i, i+1) = 0.0;
 			}
 			
-			// add boundary conditions
+			// ~~~~ BOUNDARY CONDITIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// this results from the condition on w, where we impose the 
 			// value of omega at the wall to satisfy the streamfunction
 			// definition.
 			index_matrix_lapack(vals, 0, 1)     = - 2.0/pow(params->h[0], 2) 
 												  * 2.0/(params->h[0]*(params->h[1] + params->h[0]));
 
-
+			// this bit comes to enforce the boundary condition on the omega
+			// value at the upper wall.
 			index_matrix_lapack(vals, M-2, M-1) = - 2.0/pow(params->h[params->Ny-2], 2) 
 												  *	2.0/(params->h[params->Ny-2]*(params->h[params->Ny-3] + params->h[params->Ny-2]));
+
+			// this line adds the bit coming from the lower wall motion
+			// to the vorticity equation, adding a source term 
+			// to the right hand side of the helmoltz problem 									  
+			if (k==0) {
+				b[0] += 2*w0*UK->Nz/pow(params->h[0], 3);
+			}
+
+			if (k==0) {
+				// this bit corresponds to the flow rate associate with the motion
+				// of the wall, whic goes into the vorticity equation for the upper 
+				// point.
+				b[2*(params->Ny-2)-2] -= psi_upper*UK->Nz*2.0/pow(params->h[0], 4); // FIXME interval
+
+				// there is a bit in the streamfunction eqaution as well.
+				b[2*(params->Ny-2)-1] -= psi_upper*UK->Nz/pow(params->h[0], 2);
+			}
+
 
 			// this is when i have v != 0 on the bottom boundary
 			// b[0] -= index3dC(UK, 2, 0, k)*(k*k*params->alpha*params->alpha/(h*h) + 2.0/(h*h*h*h));
@@ -315,7 +338,7 @@ void complexFieldDifferentiate(struct ComplexField *UK, struct ComplexField *UK_
 	}
 }
 
-void toVelocity(struct ComplexField *UK, struct ComplexField *VK, struct ComplexField *storage_c, struct Parameters *params) {
+void toVelocity(struct ComplexField *UK, struct ComplexField *VK, struct ComplexField *storage_c, struct Parameters *params, double w0) {
 	/*	Get velocity components from streamfunction. We need one storage for computation of the 
 		derivative.
 	*/
@@ -336,9 +359,14 @@ void toVelocity(struct ComplexField *UK, struct ComplexField *VK, struct Complex
 
 	// set to zero the bc
 	for (int k=0; k<UK->Nz/2+1; k++) { 
+		// for v
 		index3dC(VK, 1, 0, k) = 0.0;
-		index3dC(VK, 2, 0, k) = 0.0;
 		index3dC(VK, 1, UK->Ny-1, k) = 0.0;
+		if (k==0) { // we have a non zero velocity at the lower wall.
+			index3dC(VK, 2, 0, k) = w0*UK->Nz;
+		} else {
+			index3dC(VK, 2, 0, k) = 0.0;
+		}
 		index3dC(VK, 2, UK->Ny-1, k) = 0.0;
 	}
 }

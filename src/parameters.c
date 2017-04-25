@@ -21,7 +21,7 @@ struct Parameters *loadParametersFromParamsFile(void) {
 		exit(1);
 	}
 
-	params->Nz        = iniparser_getint(dict, "params:Nz", -1);
+	params->Nz        = iniparser_getint(dict, "params:nz", -1);
 	if (params->Nz == -1) {
 		log_err("key Nz was not found in params file");
 		exit(1);
@@ -81,6 +81,22 @@ struct Parameters *loadParametersFromParamsFile(void) {
 		log_err("key n_threads was not found in params file");
 		exit(1);
 	}
+
+	// params->bctype = iniparser_getint(dict, "params:bctype", -1);
+	// if (params->bctype == -1) {
+	// 	log_err("key bctype was not found in params file. 0 -> zero mass flux, 1 -> zero pg");
+	// 	exit(1);
+	// }
+	// params->A = iniparser_getdouble(dict, "params:A", -1);
+	// if (params->A == -1) {
+	// 	log_err("key A was not found in params file");
+	// 	exit(1);
+	// }
+	// params->eta = iniparser_getdouble(dict, "params:eta", -1);
+	// if (params->eta == -1) {
+	// 	log_err("key eta was not found in params file");
+	// 	exit(1);
+	// }
 	
     // allocate space for grid along y
     double *x = malloc(sizeof(double)*params->Ny);

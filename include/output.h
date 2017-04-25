@@ -23,6 +23,6 @@ int fileExists(const char * filename);
 int fsize(const char *filename);
 
 // input functions
-void initSolution(struct ComplexField *UK, struct Parameters *params, struct FFTWPlans *plans);
+void initSolution(struct ComplexField *UK, struct Parameters *params, struct FFTWPlans *plans, double w0, double psi_upper);
 
 #endif
