@@ -12,9 +12,15 @@ struct Parameters {
 	double alpha;  // axial wavenumber
 	double L;      // axial wavenumber
 	int n_it_out;  // save a file each n_it_out iterations
-	float t_restart; // if different from zero, we will try to restart the simulation
+	double t_restart; // if different from zero, we will try to restart the simulation
 				     // from the snapshot at this time. 
-	float stretch_factor; // factor for hyperbolic tangent stretching
+	double stretch_factor; // factor for hyperbolic tangent stretching
+	// int bctype;    // type of boundary conditions.
+	//			   // if 0 we assume a zero net mass flux, so psi on the walls is 0
+	//			   // if 1 we assume a zero pressure gradient, so psi on the top wall
+	//			   // will come out of the simulation.	
+	// double A;      // amplitude of the oscillatory motion
+	// double eta;    // angular frequency of the oscillatory motion
 	double *h;  // spacings of the grid
 	int n_threads;  // number of openmp threads
 };

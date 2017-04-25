@@ -14,7 +14,9 @@ void solveVelocityHelmoltzProblems(struct ComplexField *RK,
 
 void solveVorticityStreamFuncHelmoltzProblems(struct ComplexField *RK, 
 				                              struct Parameters *params, 
-				                              struct ComplexField *UK);
+				                              struct ComplexField *UK,
+				                              double w0, 
+				                              double psi_upper);
 
 void computeD2DY2(struct ComplexField *UK, struct ComplexField *storage, struct Parameters *params);
 
@@ -42,7 +44,11 @@ void complexFieldDifferentiate(struct ComplexField *UK,
 
 double integralKineticEnergy(struct RealField *U, struct Parameters *params);
 
-void toVelocity(struct ComplexField *UK, struct ComplexField *VK, struct ComplexField *storage_c, struct Parameters *params);
+void toVelocity(struct ComplexField *UK, 
+				struct ComplexField *VK, 
+				struct ComplexField *storage_c, 
+				struct Parameters *params, 
+				double w0);
 
 double CFL(struct RealField *U, struct Parameters *params);
 #endif

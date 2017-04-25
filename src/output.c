@@ -130,47 +130,55 @@ int fsize(const char *filename) {
 /*******************/
 /* Input functions */
 /*******************/
-void initSolution(struct ComplexField *UK, struct Parameters *params, struct FFTWPlans *plans) {
-	/*	Initialize complex field from a binary file. 
-	*/
+void initSolution(struct ComplexField *UK, struct Parameters *params, struct FFTWPlans *plans, double w0, double psi_upper) {
+	//	Initialize solution from snapshot directory. 
+	//  We assume at this stage that the wall are steady, 
+	// 	and control is zero.
 
-	char initfile[1000];
-
-	// start from scratch
-	if (params->t_restart == 0.0) {
-		sprintf(initfile, "init");
-	} else {
-		sprintf(initfile, "%f/data", params->t_restart);
-	}
-
-	// check size of file first, to be sure we have the exact sizes
-	int size = fsize(initfile);
-	// it can be twice of five time the nominal size
-	if (size != 2*UK->Ny*UK->Nz*sizeof(double)) {
-		if (size != 5*UK->Ny*UK->Nz*sizeof(double)) {
-			log_err("The size of the init file does not appear to match the number"
-				"of modes specified. Aborting gracefully.");
-			exit(1);
-		}
-	}
-
-	// open file
-	FILE *fh = fopen(initfile, "r");
+	// strings to store the filename of the data files
+	// we'll use to initialise the solution.
+	char U_file[1000];
+	char psi_file[1000];
+	sprintf(U_file, "%f/U", params->t_restart);
+	sprintf(psi_file, "%f/psi", params->t_restart);
 
 	// create storage since data file is in physical space
     struct RealField *U  = realFieldCreate(params->Ny, params->Nz);
+	
+	// check size of file first, to be sure we have the exact sizes
+	// it must be three times the nominal size.
+	// the nominal size contains a plus 1, since we also write 
+	// the right boundary, to have the same data.
+	int U_file_size = fsize(U_file);
+	int psi_file_size = fsize(psi_file);
+	if ( (U_file_size != 3*(UK->Nz + 1)*UK->Ny*sizeof(double)) ||
+		 (psi_file_size != (UK->Nz + 1)*UK->Ny*sizeof(double)) ) {
+		log_err("The size of the data files does not appear to match the number"
+				"of modes specified. Aborting gracefully.");
+		exit(1);
+	}
 
-	// read only azimuthal velocity and streamfunction, which are the two first
-	// we assume the rest is bullshit since we only need the two variables.
-    fread(U->component[0], sizeof(double), U->Ny*U->Nz, fh);
-    fread(U->component[2], sizeof(double), U->Ny*U->Nz, fh);
+	// open files
+	FILE *U_fh = fopen(U_file, "r");
+	FILE *psi_fh = fopen(psi_file, "r");
 
+	// since data is written with both the left and right 
+	// boundaries we will skip some data every line.
+	for (int j=0; j<params->Ny; j++) {
+    	fread(&(U->component[0][j*U->Nz]), sizeof(double), U->Nz, U_fh);
+    	fread(&(U->component[2][j*U->Nz]), sizeof(double), U->Nz, psi_fh);
+    	fseek(U_fh, sizeof(double), SEEK_CUR);
+    	fseek(psi_fh, sizeof(double), SEEK_CUR);
+    }
+    
     // go to fourier
     fft(U, UK, plans);
 
     // at this point we enforce the boundary conditions for the three
-    // components of the solution, u, omega, and psi. 
-    enforceNoSlip(UK, params);
+    // components of the solution, u, omega, and psi. WHY THIS?
+    // because the input file might not satisfy the boundary conditions.
+    // solution.
+    applyBC(UK, params, w0, psi_upper);
 
 	// Then we update omega, cause we didnt have it in the file.
 	// For this we need the second derivative of the streamfunction
@@ -188,5 +196,6 @@ void initSolution(struct ComplexField *UK, struct Parameters *params, struct FFT
 	complexFieldDestroy(storage);
 	realFieldDestroy(U);
 
-	fclose(fh);
+	fclose(U_fh);
+	fclose(psi_fh);
 }
