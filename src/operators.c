@@ -5,7 +5,7 @@
 #include <fftw3.h>
 //#define MKL_Complex16 complex
 //#include <mkl.h>
-#include <lapacke/lapacke.h>
+#include <lapacke.h>
 #include <omp.h>
 
 
