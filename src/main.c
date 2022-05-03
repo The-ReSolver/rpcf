@@ -88,6 +88,11 @@ int main(int argc, char **argv) {
 	// compute nonlinear term first
 	nonLinearTerm(UK, storage_r0, storage_r1, storage_r2, params, plans, NK);
 
+	/******************/
+	/* Output headers */
+	/******************/	
+	printf("Time        K                  dKdt                dKdt/K              CFL\n");
+	printf("----------------------------------------------------------------------------------\n");
 
 	/*************************/
 	/* Main integration loop */
