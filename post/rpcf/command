@@ -1,0 +1,15 @@
+clear all
+clc
+load out.mat;
+A = sparse(Ar, Ac, Ad);
+B = sparse(Br, Bc, Bd);
+opts.issym  = 0;
+opts.isreal = 1;
+opts.disp   = 2;
+opts.maxit  = 10000;
+tic;
+[vecs, vals] = eigs(A, B, k, 1, opts);
+t = toc;
+save out.mat vals vecs t;
+exit
+
