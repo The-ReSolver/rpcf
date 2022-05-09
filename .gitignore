@@ -1,4 +1,3 @@
-
 *.o
-
 /rpcf
+*.egg-info
