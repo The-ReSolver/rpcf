@@ -35,4 +35,4 @@ if __name__ == '__main__':
         casedir = sys.argv[1]
 
     # generate simulation directory
-    generate_sim_folder(casedir)
+    generate_sim_directory(casedir)
