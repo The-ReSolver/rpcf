@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <omp.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include "dbg.h"
 #include "parameters.h"
@@ -14,6 +16,10 @@
 #include "fftwplans.h"
 #include "output.h"
 
+#ifndef MAX_BUF
+#define MAX_BUF 200
+#endif
+
 
 
 int main(int argc, char **argv) {
@@ -21,6 +27,13 @@ int main(int argc, char **argv) {
 	// return code of the program
 	int return_code = 0;
 
+	// initialise character array for path
+	char path[MAX_BUF];
+
+	// parse command line arguments
+	if (argc == 2){
+		chdir(argv[1]);
+	}
 
 	/********************************/
 	/*        Checks     		    */
