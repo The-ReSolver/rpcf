@@ -6,14 +6,11 @@
 #include "dbg.h"
 #include "parameters.h"
 
-struct Parameters *loadParametersFromParamsFile(void) {
+void reloadParametersFromParamsFile(struct Parameters *params) {
     /*  Parse arguments from init file */
 
     dictionary *dict = iniparser_load("params");
 
-    // initialize params struct
-    struct Parameters *params = malloc(sizeof(struct Parameters));
-    
     // parse parameters 
     params->Ny        = iniparser_getint(dict, "params:ny", -1);
     if (params->Ny == -1) {
@@ -97,7 +94,17 @@ struct Parameters *loadParametersFromParamsFile(void) {
     //  log_err("key eta was not found in params file");
     //  exit(1);
     // }
-    
+
+    iniparser_freedict(dict);
+}
+
+struct Parameters *loadParametersFromParamsFile(void) {
+    // initialize params struct
+    struct Parameters *params = malloc(sizeof(struct Parameters));
+
+    // load variables from params file
+    reloadParametersFromParamsFile(params);
+
     // allocate space for grid along y
     double *x = malloc(sizeof(double)*params->Ny);
 
@@ -109,14 +116,13 @@ struct Parameters *loadParametersFromParamsFile(void) {
         x[i] = tanh(params->stretch_factor*(i*step-0.5)) / tanh(0.5*params->stretch_factor);
     }
 
-    // allocate space for 
+    // allocate space for
     params->h = malloc(sizeof(double)*(params->Ny-1));
     for (int i=0; i<params->Ny-1; i++) {
         params->h[i] = x[i+1] - x[i];
     }
 
     free(x);
-    iniparser_freedict(dict);
     return params;
 }
 

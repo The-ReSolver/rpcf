@@ -26,6 +26,7 @@ struct Parameters {
 };
 
 struct Parameters *loadParametersFromParamsFile(void);
+void reloadParametersFromParamsFile(struct Parameters *params);
 struct Parameters *loadParametersFromCommandLine(int argc, char *argv[]);
 void parametersDestroy(struct Parameters *params);
 

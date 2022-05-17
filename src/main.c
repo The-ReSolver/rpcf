@@ -27,9 +27,6 @@ int main(int argc, char **argv) {
 	// return code of the program
 	int return_code = 0;
 
-	// initialise character array for path
-	char path[MAX_BUF];
-
 	// parse command line arguments
 	if (argc == 2){
 		chdir(argv[1]);
@@ -183,6 +180,9 @@ int main(int argc, char **argv) {
 		// params->Re = 10 + 0.2*t;
 		//params->L = 8.0 + t*(80-8)/10000.0;
 		//params->alpha = 4*asin(1.0)/params->L;
+
+		// reload params file in case it's been updated
+		reloadParametersFromParamsFile(params);
 	}
 
 
