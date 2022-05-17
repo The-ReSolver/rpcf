@@ -1,3 +1,4 @@
 *.o
 /rpcf
 *.egg-info
+*.pyc

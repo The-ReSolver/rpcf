@@ -18,11 +18,11 @@ def make_pngs(casedir):
 
     # define contour levels
     levels = np.linspace(-10, 10, 100)
-    for i in range(10, 15):
+    for i in range(len(sim.t)):
         snap = sim[sim.t[i]]
         pylab.clf()
-        # pylab.contourf(snap.omega.z, snap.omega.y, snap.omega.data, levels, extend="both", cmap=cm.seismic)
-        pylab.contourf(snap.omega.z, snap.omega.y, snap.omega.data, extend="both", cmap=pylab.cm.seismic)
+        pylab.contourf(snap.omega.z, snap.omega.y, snap.omega.data, levels, extend="both", cmap=cm.seismic)
+        # pylab.contourf(snap.omega.z, snap.omega.y, snap.omega.data, extend="both", cmap=pylab.cm.seismic)
         pylab.gca().set_aspect(1)
         pylab.xticks([0, 2, 4, 6, 8])
         pylab.yticks([-1, 0, 1])
@@ -44,9 +44,13 @@ if __name__ == '__main__':
         print('Invalid arguments given! Missing simulation directory path!')
         sys.exit(1)
     casedir = sys.argv[1]
+    try:
+        frame_rate = sys.argv[2]
+    except IndexError:
+        frame_rate = 60
 
     # generate pngs
     make_pngs(casedir)
 
     # make video using ffmpeg
-    pngs2mp4(casedir, 'wearenumberone.mp4')
+    pngs2mp4(casedir, 'wearenumberone.mp4', frame_rate=frame_rate)
