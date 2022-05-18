@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 	struct Parameters *params = loadParametersFromParamsFile();
 	omp_set_num_threads(params->n_threads);
 
-	
+
 	/*********************/
 	/* Create fftw plans */
 	/*********************/

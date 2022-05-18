@@ -6,49 +6,31 @@
 #include "dbg.h"
 #include "parameters.h"
 
+// the reload function only reloads certain parameters that don't break anything
 void reloadParametersFromParamsFile(struct Parameters *params) {
     /*  Parse arguments from init file */
 
     dictionary *dict = iniparser_load("params");
 
-    // parse parameters 
-    params->Ny        = iniparser_getint(dict, "params:ny", -1);
-    if (params->Ny == -1) {
-        log_err("key Ny was not found in params file");
-        exit(1);
-    }
-
-    params->Nz        = iniparser_getint(dict, "params:nz", -1);
-    if (params->Nz == -1) {
-        log_err("key Nz was not found in params file");
-        exit(1);
-    }
-    
+    // parse parameters
     params->Re        = iniparser_getdouble(dict, "params:re", -1);
     if (params->Re == -1) {
         log_err("key Re was not found in params file");
         exit(1);
     }
-    
+
     params->Ro     = iniparser_getdouble(dict, "params:ro", -1);
     if (params->Ro == -1) {
         log_err("key Ro was not found in params file");
         exit(1);
     }
-    
+
     params->dt        = iniparser_getdouble(dict, "params:dt", -1);
     if (params->dt == -1) {
         log_err("key dt was not found in params file");
         exit(1);
     }
 
-    params->alpha     = 4*asin(1.0)/iniparser_getdouble(dict, "params:L", -1);
-    params->L         =             iniparser_getdouble(dict, "params:L", -1);
-    if (params->alpha == -1) {
-        log_err("key L was not found in params file");
-        exit(1);
-    }
-    
     params->T         = iniparser_getdouble(dict, "params:t", -1);
     if (params->T == -1) {
         log_err("key T was not found in params file");
@@ -58,24 +40,6 @@ void reloadParametersFromParamsFile(struct Parameters *params) {
     params->n_it_out  = iniparser_getint(dict, "params:n_it_out", -1);
     if (params->n_it_out == -1) {
         log_err("key n_it_out was not found in params file");
-        exit(1);
-    }
-
-    params->t_restart = iniparser_getdouble(dict, "params:t_restart", -1);
-    if (params->t_restart == -1) {
-        log_err("key t_restart was not found in params file");
-        exit(1);
-    }
-
-    params->stretch_factor = iniparser_getdouble(dict, "params:stretch_factor", -1);
-    if (params->stretch_factor == -1) {
-        log_err("key stretch_factor was not found in params file");
-        exit(1);
-    }
-
-    params->n_threads = iniparser_getint(dict, "params:n_threads", -1);
-    if (params->n_threads == -1) {
-        log_err("key n_threads was not found in params file"); 
         exit(1);
     }
 
@@ -105,6 +69,47 @@ struct Parameters *loadParametersFromParamsFile(void) {
     // load variables from params file
     reloadParametersFromParamsFile(params);
 
+    // read data from params file
+    dictionary *dict = iniparser_load("params");
+
+    // parse invariant arguments
+    params->Ny        = iniparser_getint(dict, "params:ny", -1);
+    if (params->Ny == -1) {
+        log_err("key Ny was not found in params file");
+        exit(1);
+    }
+
+    params->Nz        = iniparser_getint(dict, "params:nz", -1);
+    if (params->Nz == -1) {
+        log_err("key Nz was not found in params file");
+        exit(1);
+    }
+
+    params->alpha     = 4*asin(1.0)/iniparser_getdouble(dict, "params:L", -1);
+    params->L         =             iniparser_getdouble(dict, "params:L", -1);
+    if (params->alpha == -1) {
+        log_err("key L was not found in params file");
+        exit(1);
+    }
+
+    params->t_restart = iniparser_getdouble(dict, "params:t_restart", -1);
+    if (params->t_restart == -1) {
+        log_err("key t_restart was not found in params file");
+        exit(1);
+    }
+
+    params->stretch_factor = iniparser_getdouble(dict, "params:stretch_factor", -1);
+    if (params->stretch_factor == -1) {
+        log_err("key stretch_factor was not found in params file");
+        exit(1);
+    }
+
+    params->n_threads = iniparser_getint(dict, "params:n_threads", -1);
+    if (params->n_threads == -1) {
+        log_err("key n_threads was not found in params file"); 
+        exit(1);
+    }
+
     // allocate space for grid along y
     double *x = malloc(sizeof(double)*params->Ny);
 
@@ -122,6 +127,7 @@ struct Parameters *loadParametersFromParamsFile(void) {
         params->h[i] = x[i+1] - x[i];
     }
 
+    iniparser_freedict(dict);
     free(x);
     return params;
 }
