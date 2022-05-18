@@ -6,7 +6,6 @@
 #include <signal.h>
 #include <omp.h>
 #include <unistd.h>
-#include <errno.h>
 
 #include "dbg.h"
 #include "parameters.h"
