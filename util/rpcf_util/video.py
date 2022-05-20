@@ -37,7 +37,6 @@ def make_pngs(casedir, vid_range=None):
         pylab.ylabel('$y$')
         pylab.gca().tick_params(axis='x', direction='out')
         pylab.gca().tick_params(axis='y', direction='out')
-        pylab.gcf().suptitle(f'Time = {sim.t[i]}')
         pylab.savefig(os.path.join(os.getcwd(), 'videos/', os.path.basename(casedir[:-1]), 'frame%06d.png' % i), dpi=1000, bbox_inches='tight')
         print(i, sim.t[i])
 
@@ -58,7 +57,7 @@ if __name__ == '__main__':
     if args.frame_rate is None:
         args.frame_rate = 60
     if args.vid_range is not None:
-        args.vid_range = list(map(int, args.vid_range.split('-')))
+        args.vid_range = list(map(float, args.vid_range.split('-')))
     if args.vid_name is None:
         args.vid_name = 'wearenumberone.mp4'
 
