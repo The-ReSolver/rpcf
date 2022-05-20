@@ -124,9 +124,12 @@ int main(int argc, char **argv) {
 		applyBC(UK, params, w0, psi_upper);
 
 		// update buffer for derivative of the kinetic energy
-		if ((it + 2) % params->n_it_out == 0 || 
+		if ((it + 2) % params->n_it_out == 0 ||
+			(it + 2) % params->n_it_print == 0 ||
 			(it + 1) % params->n_it_out == 0 ||
-			(it + 0) % params->n_it_out == 0) {
+			(it + 1) % params->n_it_print == 0 ||
+			(it + 0) % params->n_it_out == 0 ||
+			(it + 0) % params->n_it_print == 0) {
 
 			// get velocity components
 			toVelocity(UK, VK, storage_c0, params, w0);
@@ -136,6 +139,7 @@ int main(int argc, char **argv) {
 
 			updateBuffer(Ks, integralKineticEnergy(V, params));
 
+			// save data to disk
 			if ( (it + 0) % params->n_it_out == 0) {
 				ifft(UK, U, plans);
 
@@ -143,16 +147,18 @@ int main(int argc, char **argv) {
 				saveSnapshot(t, U, V);
 				saveMetadata(t, Ks->data[0], ddt(Ks));
 
-				// output to screen
-				printf("%.5e %.12e %+.12e %+.12e %.5e\n", t, Ks->data[0], 
-										       	 	         ddt(Ks), 
-											     	         ddt(Ks)/Ks->data[0],
-											     	         CFL(V, params));
-				fflush(stdout);
-
 				// if (fabs(ddt(Ks)) < 1e-12) {
-			    	// break;
+					// break;
 				// }
+			}
+
+			// print data to stdout
+			if ( (it + 0) % params->n_it_print == 0) {
+				printf("%.5e %.12e %+.12e %+.12e %.5e\n", t, Ks->data[0],
+														ddt(Ks),
+														ddt(Ks)/Ks->data[0],
+														CFL(V, params));
+				fflush(stdout);
 			}
 		}
 

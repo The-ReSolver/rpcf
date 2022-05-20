@@ -43,6 +43,8 @@ void reloadParametersFromParamsFile(struct Parameters *params) {
         exit(1);
     }
 
+    params->n_it_print = iniparser_getint(dict, "params:n_it_print", params->n_it_out);
+
     // params->bctype = iniparser_getint(dict, "params:bctype", -1);
     // if (params->bctype == -1) {
     //  log_err("key bctype was not found in params file. 0 -> zero mass flux, 1 -> zero pg");

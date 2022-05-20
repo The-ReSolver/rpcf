@@ -4,14 +4,16 @@
 // This struct contains all the parameters which we want to use in the 
 // simulation so we carry around a single variable, instead of many more.
 struct Parameters {
-	int Ny, Nz;    // number of modes along the two directions
-	double Re;     // Reynolds number
-	double Ro;     // rotation number
-	double dt;     // time step
-	double T;      // total integration time
-	double alpha;  // axial wavenumber
-	double L;      // axial wavenumber
-	int n_it_out;  // save a file each n_it_out iterations
+	int Ny, Nz;     // number of modes along the two directions
+	double Re;      // Reynolds number
+	double Ro;      // rotation number
+	double dt;      // time step
+	double T;       // total integration time
+	double alpha;   // axial wavenumber
+	double L;       // axial wavenumber
+	int n_it_out;   // save a file each n_it_out iterations
+	int n_it_print; // print flow information to stdout every n_it_print iterations
+					// defaults to n_it_out if not specified in params file
 	double t_restart; // if different from zero, we will try to restart the simulation
 				     // from the snapshot at this time. 
 	double stretch_factor; // factor for hyperbolic tangent stretching
