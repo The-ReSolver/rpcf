@@ -5,9 +5,10 @@ import sys
 import argparse
 
 import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 from rpcf.simulation import SimulationResults
-import pylab
 
 def make_pngs(casedir, vid_range=None):
     # make sure directories exist
@@ -22,23 +23,31 @@ def make_pngs(casedir, vid_range=None):
         vid_range = range(len(sim.t))
     else:
         vid_range = range(np.where(sim.t == vid_range[0])[0][0], np.where(sim.t == vid_range[1])[0][0])
-
+    
     # define contour levels
-    levels = np.linspace(-10, 10, 100)
+    maxval, minval = 0, 0
     for i in vid_range:
         snap = sim[sim.t[i]]
-        pylab.clf()
-        # pylab.contourf(snap.omega.z, snap.omega.y, snap.omega.data, levels, extend="both", cmap=pylab.cm.seismic)
-        pylab.contourf(snap.omega.z, snap.omega.y, snap.omega.data, extend="both", cmap=pylab.cm.seismic)
-        pylab.gca().set_aspect(1)
-        pylab.xticks([0, 2, 4, 6, 8])
-        pylab.yticks([-1, 0, 1])
-        pylab.xlabel('$z$')
-        pylab.ylabel('$y$')
-        pylab.gca().tick_params(axis='x', direction='out')
-        pylab.gca().tick_params(axis='y', direction='out')
-        pylab.savefig(os.path.join(os.getcwd(), 'videos/', os.path.basename(casedir[:-1]), 'frame%06d.png' % i), dpi=1000, bbox_inches='tight')
-        print(i, sim.t[i])
+        max_at_t = np.amax(snap.omega.data)
+        min_at_t = np.amin(snap.omega.data)
+        if max_at_t > maxval:
+            maxval = max_at_t
+        if min_at_t < minval:
+            minval = min_at_t
+    levels = np.linspace(minval, maxval, 100)
+
+    mpl.rcParams['image.cmap'] = 'seismic'
+    for i in vid_range:
+        print(f'Plotting: {i}, {sim.t[i]}')
+        snap = sim[sim.t[i]]
+        plt.clf()
+        plt.contourf(snap.omega.z, snap.omega.y, snap.omega.data, levels, extend="both", vmin=minval, vmax=maxval)
+        plt.gca().set_aspect(1)
+        plt.xticks([0, 2, 4, 6, 8])
+        plt.yticks([-1, 0, 1])
+        plt.xlabel('$z$')
+        plt.ylabel('$y$')
+        plt.savefig(os.path.join(os.getcwd(), 'videos/', os.path.basename(casedir[:-1]), 'frame%06d.png' % i), dpi=1000, bbox_inches='tight')
 
 def pngs2mp4(casedir, video_name, frame_rate):
     video_dir = os.path.join(os.getcwd(), 'videos/', os.path.basename(casedir[:-1]))
