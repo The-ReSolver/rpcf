@@ -121,7 +121,10 @@ int main(int argc, char **argv) {
 		w0 = 0.0;
 
 		// then apply bc
-		applyBC(UK, params, w0, psi_upper);
+		// applyBC(UK, params, w0, psi_upper);
+
+		// general bc not applied as control aspects of code ignored
+		enforceNoSlip(UK, params);
 
 		// update buffer for derivative of the kinetic energy
 		if ((it + 2) % params->n_it_out == 0 ||
