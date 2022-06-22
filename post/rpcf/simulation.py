@@ -60,7 +60,7 @@ class SimulationResults():
 
     def getK(self, ts=None):
         """ Load time history of perturbation kinetic energy. """
-        if ts == None:
+        if ts is None:
             ts = self.t
         try:
             return np.array([self._parse_metadata(t)['K'] for t in ts])
