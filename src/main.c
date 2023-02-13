@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 	/*********************/
 	struct FFTWPlans *plans = fftwPlansCreate(params->Nz);
 
-	
+
 	/**********************/
 	/* Physical variables */
 	/**********************/

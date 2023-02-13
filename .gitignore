@@ -2,3 +2,5 @@
 /rpcf
 *.egg-info
 *.pyc
+.vscode
+*.pyc
