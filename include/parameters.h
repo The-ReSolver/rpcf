@@ -16,6 +16,7 @@ struct Parameters {
 					// defaults to n_it_out if not specified in params file
 	double t_restart; // if different from zero, we will try to restart the simulation
 				     // from the snapshot at this time. 
+	double t_offset; // amount of time before we start to write data
 	double stretch_factor; // factor for hyperbolic tangent stretching
 	// int bctype;    // type of boundary conditions.
 	//			   // if 0 we assume a zero net mass flux, so psi on the walls is 0

@@ -151,9 +151,9 @@ void initSolution(struct ComplexField *UK, struct Parameters *params, struct FFT
 	// the right boundary, to have the same data.
 	int U_file_size = fsize(U_file);
 	int psi_file_size = fsize(psi_file);
-	if ( (U_file_size != 3*(UK->Nz + 1)*UK->Ny*sizeof(double)) ||
-		 (psi_file_size != (UK->Nz + 1)*UK->Ny*sizeof(double)) ) {
-		log_err("The size of the data files does not appear to match the number"
+	if (    (U_file_size != 3*(UK->Nz + 1)*UK->Ny*sizeof(double)) ||
+			(psi_file_size != (UK->Nz + 1)*UK->Ny*sizeof(double)) ) {
+		log_err("The size of the data files does not appear to match the number "
 				"of modes specified. Aborting gracefully.");
 		exit(1);
 	}
@@ -165,10 +165,10 @@ void initSolution(struct ComplexField *UK, struct Parameters *params, struct FFT
 	// since data is written with both the left and right 
 	// boundaries we will skip some data every line.
 	for (int j=0; j<params->Ny; j++) {
-    	fread(&(U->component[0][j*U->Nz]), sizeof(double), U->Nz, U_fh);
-    	fread(&(U->component[2][j*U->Nz]), sizeof(double), U->Nz, psi_fh);
-    	fseek(U_fh, sizeof(double), SEEK_CUR);
-    	fseek(psi_fh, sizeof(double), SEEK_CUR);
+		fread(&(U->component[0][j*U->Nz]), sizeof(double), U->Nz, U_fh);
+		fread(&(U->component[2][j*U->Nz]), sizeof(double), U->Nz, psi_fh);
+		fseek(U_fh, sizeof(double), SEEK_CUR);
+		fseek(psi_fh, sizeof(double), SEEK_CUR);
     }
     
     // go to fourier

@@ -21,6 +21,7 @@ def generate_sim_directory(casedir):
         f.write('T              = 100;\n')
         f.write('n_it_out       = 100;\n')
         f.write('t_restart      = 0.000;\n')
+        f.write('t_offset       = 0.0;\n')
         f.write('stretch_factor = 1e-12;\n')
         f.write('n_threads      = 1;\n')
     open(os.path.join(casedir, '0.000000/U'), 'w').close()

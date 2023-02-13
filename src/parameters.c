@@ -100,6 +100,12 @@ struct Parameters *loadParametersFromParamsFile(void) {
         exit(1);
     }
 
+    params->t_offset = iniparser_getdouble(dict, "params:t_offset", -1);
+    if (params->t_offset == -1){
+        log_err("key t_offset was not found in the params file");
+        exit(1);
+    }
+
     params->stretch_factor = iniparser_getdouble(dict, "params:stretch_factor", -1);
     if (params->stretch_factor == -1) {
         log_err("key stretch_factor was not found in params file");
