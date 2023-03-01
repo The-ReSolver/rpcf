@@ -110,9 +110,9 @@ def integral(f, direction=None):
 	if direction == None:
 		out = simps(f.data, x=f.y[:,0], axis=0)
 		return simps(out, dx=float(f.metadata['L'])/f.metadata['Nz'])
-	elif direction is 'y':
+	elif direction == 'y':
 		return simps(f.data, x=f.y[:,0], axis=0)
-	elif direction is 'z':
+	elif direction == 'z':
 		return simps(f.data, dx=float(f.metadata['L'])/f.metadata['Nz'], axis=1)
 	else:
 		raise ValueError("direction not understood")
