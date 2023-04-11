@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
 			updateBuffer(Ks, integralKineticEnergy(V, params));
 
 			// save data to disk
-			if ( (it + 0) % params->n_it_out == 0 && t >= params->t_offset) {
+			if ( (it + 0) % params->n_it_out == 0 && (t >= params->t_offset || t == 0.0)) {
 				ifft(UK, U, plans);
 
 				// save data to file
