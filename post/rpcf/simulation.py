@@ -83,7 +83,7 @@ class SimulationResults():
 
             # default is snapshot spacing
             step = slice_obj.step if slice_obj.step is not None else self.t[1]
-            if abs(divmod(step, self.t[1])[1] > 1e10):
+            if abs(divmod(step, self.t[1])[1] > 1e-10):
                 raise IndexError("step size is not a mutiple of available data time step") 
 
             # if stop is not provided we set the maximum            
