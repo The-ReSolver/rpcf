@@ -8,7 +8,7 @@ make clean
 make
 ```
 
-The result will be an executable called `rpcf` in the solver directory.If there are any compile errors (most likely from certain header files not being in
+The result will be an executable called `rpcf` in the solver directory. If there are any compile errors (most likely from certain header files not being in
 the include path) then you're on your own lmao :joy:
 
 For ease it's a good idea to add a symlink to the appropriate directory in your path, e.g.
