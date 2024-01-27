@@ -17,7 +17,8 @@ double ddt(struct Buffer *buf);
 // output functions
 void saveSnapshot(double t, struct RealField *U, struct RealField *V);
 void dumpToBinary(double *data, FILE *fh, int Ny, int Nz);
-	void saveMetadata(double t, double K, double dKdt);
+void saveMetadata(double t, double K, double dKdt);
+void saveKineticEnergy(double t, double K);
 
 int fileExists(const char * filename);
 int fsize(const char *filename);

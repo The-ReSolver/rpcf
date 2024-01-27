@@ -18,6 +18,9 @@ struct Parameters {
 				     // from the snapshot at this time. 
 	double t_offset; // amount of time before we start to write data
 	double stretch_factor; // factor for hyperbolic tangent stretching
+	int output_mode; // type of data the solver outputs at each iteration
+					 // output_mode = 1: full data
+					 // output_mode = 2: kinetic energy only
 	// int bctype;    // type of boundary conditions.
 	//			   // if 0 we assume a zero net mass flux, so psi on the walls is 0
 	//			   // if 1 we assume a zero pressure gradient, so psi on the top wall

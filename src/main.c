@@ -147,8 +147,13 @@ int main(int argc, char **argv) {
 				ifft(UK, U, plans);
 
 				// save data to file
-				saveSnapshot(t, U, V);
-				saveMetadata(t, Ks->data[0], ddt(Ks));
+				if (params->output_mode == 1){
+					saveSnapshot(t, U, V);
+					saveMetadata(t, Ks->data[0], ddt(Ks));
+				}
+				else if (params->output_mode == 2){
+					saveKineticEnergy(t, Ks->data[0]);
+				}
 
 				// if (fabs(ddt(Ks)) < 1e-12) {
 					// break;

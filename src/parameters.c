@@ -118,6 +118,15 @@ struct Parameters *loadParametersFromParamsFile(void) {
         exit(1);
     }
 
+    params->output_mode = iniparser_getint(dict, "params:output_mode", -1);
+    if (params->output_mode == -1){
+        params->output_mode = 1;
+    }
+    if (params->output_mode > 2 || params->output_mode < 1){
+        log_err("invalid output mode in params file");
+        exit(1);
+    }
+
     // allocate space for grid along y
     double *x = malloc(sizeof(double)*params->Ny);
 

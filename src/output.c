@@ -104,6 +104,25 @@ void saveMetadata(double t, double K, double dKdt) {
 	fclose(fh);
 }
 
+void saveKineticEnergy(double t, double K){
+	/*  Write kinetic energy and associated time to separate
+	    files
+	*/
+	char somebuffer[1000];
+
+	// append kinetic energy to file
+	sprintf(somebuffer, "K");
+	FILE *fh = fopen(somebuffer, "a");
+	fwrite(&K, sizeof(double), 1, fh);
+	fclose(fh);
+
+	// append current time to file
+	sprintf(somebuffer, "t");
+	fh = fopen(somebuffer, "a");
+	fwrite(&t, sizeof(double), 1, fh);
+	fclose(fh);
+}
+
 int fileExists(const char *filename) {
 	/*	Check if a file exists
 	*/
