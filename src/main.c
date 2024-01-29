@@ -199,6 +199,14 @@ int main(int argc, char **argv) {
 	}
 
 
+	/***********************/
+	/* Save final snapshot */
+	/***********************/
+	if (params->output_mode == 2){
+		saveSnapshot(t, U, V);
+		saveMetadata(t, Ks->data[0], ddt(Ks));
+	}
+
 
 
 	/********************/	
