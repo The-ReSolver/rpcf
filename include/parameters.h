@@ -29,6 +29,7 @@ struct Parameters {
 	// double eta;    // angular frequency of the oscillatory motion
 	double *h;  // spacings of the grid
 	int n_threads;  // number of openmp threads
+	int steady_halt; // halt the run if a steady solution is found
 };
 
 struct Parameters *loadParametersFromParamsFile(void);

@@ -155,13 +155,13 @@ int main(int argc, char **argv) {
 					saveKineticEnergy(t, Ks->data[0]);
 				}
 
-				// if (fabs(ddt(Ks)) < 1e-12) {
-					// break;
-				// }
+				if (params->steady_halt && fabs(ddt(Ks)) < 1e-12) {
+					break;
+				}
 			}
 
 			// print data to stdout
-			if ( (it + 0) % params->n_it_print == 0) {
+			if ((it + 0) % params->n_it_print == 0) {
 				printf("%.5e %.12e %+.12e %+.12e %.5e\n", t, Ks->data[0],
 														ddt(Ks),
 														ddt(Ks)/Ks->data[0],
