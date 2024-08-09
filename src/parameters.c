@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include <iniparser.h>
+#include <iniparser/iniparser.h>
 #include <math.h>
 
 #include "dbg.h"
