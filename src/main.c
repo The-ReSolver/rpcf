@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 
 	/******************/
 	/* Output headers */
-	/******************/	
+	/******************/
 	printf("Time        K                  dKdt                dKdt/K              CFL\n");
 	printf("----------------------------------------------------------------------------------\n");
 
@@ -108,7 +108,6 @@ int main(int argc, char **argv) {
 	/*************************/
 	double t = params->t_restart;
 	for (int it=0; it<(params->T - params->t_restart)/params->dt; it++) {
-
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 		// ~~~~~~~~~    CONTROL METHOD    ~~~~~~~~~~~~~~~~ //
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
@@ -155,7 +154,7 @@ int main(int argc, char **argv) {
 					saveKineticEnergy(t, Ks->data[0]);
 				}
 
-				if (params->steady_halt && fabs(ddt(Ks)) < 1e-12 && t != 0.0) {
+				if (fabs(ddt(Ks)) < params->steady_halt && t != 0.0) {
 					break;
 				}
 			}

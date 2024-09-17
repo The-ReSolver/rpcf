@@ -45,9 +45,9 @@ void reloadParametersFromParamsFile(struct Parameters *params) {
 
     params->n_it_print = iniparser_getint(dict, "params:n_it_print", params->n_it_out);
 
-    params->steady_halt = iniparser_getint(dict, "params:steady_halt", 0);
-    if (params->steady_halt > 1 || params->steady_halt < 0){
-        log_err("invalid value of steady flow halting, only true (1) or false (0) allowed");
+    params->steady_halt = iniparser_getdouble(dict, "params:steady_halt", 0);
+    if (params->steady_halt < 0){
+        log_err("invalid energy to halt the simulation, must be positive");
         exit(1);
     }
 
