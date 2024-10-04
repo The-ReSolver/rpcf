@@ -42,7 +42,7 @@ class SimulationResults():
         c.read(os.path.join(casedir, "params"))
 
         # convert to appropriate values
-        floats = ['Re', 'Ro', 'dt', 'T', 'L', 't_restart', 'stretch_factor', 'A', 'eta']
+        floats = ['Re', 'Ro', 'dt', 'T', 'L', 't_restart', 't_offset', 'stretch_factor', 'A', 'eta', 'steady_halt']
         convert = lambda k, v : float(v.strip(";")) if k in floats else int(v.strip(";"))
         self.params = {k:convert(k, v) for k, v in c.items("params")}
 
