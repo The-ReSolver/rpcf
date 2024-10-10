@@ -51,6 +51,24 @@ void reloadParametersFromParamsFile(struct Parameters *params) {
         exit(1);
     }
 
+    params->CFLmax = iniparser_getdouble(dict, "params:CFLmax", 0.5);
+    if (params->CFLmax >= 1){
+        log_err("CFL number must be less than one");
+        exit(1);
+    }
+
+    params->CFLmin = iniparser_getdouble(dict, "params:CFLmin", 0);
+    if (params->CFLmin < 0){
+        log_err("CFL number cannot be less than zero");
+        exit(1);
+    }
+
+    params->dyanmic_stepping = iniparser_getint(dict, "params:dynamic_stepping", 0)
+    if (params->dynamic_stepping != 0 && params->dynamic_stepping != 1){
+        log_err("dynamic stepping has to be either true (1) or false (0)")
+        exit(1);
+    }
+
     // params->bctype = iniparser_getint(dict, "params:bctype", -1);
     // if (params->bctype == -1) {
     //  log_err("key bctype was not found in params file. 0 -> zero mass flux, 1 -> zero pg");
