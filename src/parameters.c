@@ -63,9 +63,9 @@ void reloadParametersFromParamsFile(struct Parameters *params) {
         exit(1);
     }
 
-    params->dyanmic_stepping = iniparser_getint(dict, "params:dynamic_stepping", 0)
+    params->dynamic_stepping = iniparser_getint(dict, "params:dynamic_stepping", 0);
     if (params->dynamic_stepping != 0 && params->dynamic_stepping != 1){
-        log_err("dynamic stepping has to be either true (1) or false (0)")
+        log_err("dynamic stepping has to be either true (1) or false (0)");
         exit(1);
     }
 
