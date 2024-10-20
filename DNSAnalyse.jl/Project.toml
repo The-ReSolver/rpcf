@@ -1,0 +1,17 @@
+name = "DNSAnalyse"
+uuid = "14f1e168-4bf0-45e2-9a74-aa2e451932dc"
+authors = ["Thomas Burton <tburton5572@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
+IniFile = "83e8ac13-25f8-5344-8a64-a9f2b223428f"
+Mmap = "a63ad114-7e13-5084-954f-fe012c677804"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+ReSolverInterface = "9a172a43-bfaf-4cc4-8edb-b32fc4c49da3"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
