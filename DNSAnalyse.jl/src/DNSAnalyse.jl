@@ -2,9 +2,7 @@ module DNSAnalyse
 
 using IniFile, FFTW, Printf, Mmap
 
-using ReSolverInterface
-
-export DNSData, loadDNS
+export DNSData
 export dns2field!, dns2field, correct_mean!
 export mean!, mean
 
